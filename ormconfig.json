@@ -1,0 +1,15 @@
+[
+  {
+    "name": "default",
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "sa",
+    "password": "opensuse",
+    "database": "sky_gdjzj",
+    "synchronize": true,
+    "entities": [
+      "src/entities/**/*.ts"
+    ]
+  }
+]

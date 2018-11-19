@@ -15,14 +15,17 @@ const mongoUri = config.mongo.host;
 createConnection({
     "name": "default",
     "type": "mysql",
-    "host": "localhost",
-    "port": 3306,
-    "username": "sa",
-    "password": "opensuse",
-    "database": "sky_gdjzj",
+    "host": config.mysql.host,
+    "port": +config.mysql.port,
+    "username": config.mysql.user,
+    "password": config.mysql.password,
+    "database": config.mysql.database,
     "synchronize": true,
     "entities": [
-        SPlatUser
+        SPlatUser,
+        SPlatFightbfs,
+        SPlatFightcardbfs,
+        SPlatFightnumbfs
     ]
 }).then(async connection => {
 
@@ -36,6 +39,7 @@ createConnection({
     console.log("Fetch user count from database...");
     const repository = await connection.manager.getRepository(SPlatUser);
     const count = await repository.count();
+    console.log("User count:", count);
     const batchCount = Math.ceil(count / 1000);
     /** Migrate SPlatUser to WxUser */
     for (let i = 0; i < batchCount; ++i) {
@@ -44,7 +48,7 @@ createConnection({
             take: 1000,
         });
 
-        let users = splatUsers.filter(m => !m.wxid.startsWith("player")).map(splatUser => {
+        let users = splatUsers.filter(m => m.wxid && !m.wxid.startsWith("player")).map(splatUser => {
             return new WxUserModel({
                 userId: splatUser.id,
                 nativeOpenId: splatUser.wxid,
@@ -69,6 +73,7 @@ createConnection({
     console.log("Fetch rank role data from database...");
     const rankRoleRepository = await connection.manager.getRepository(SPlatFightcardbfs);
     const rankRoleCount = await rankRoleRepository.count();
+    console.log("Rank role count:", rankRoleCount);
     const rankRoleBatchCount = Math.ceil(rankRoleCount / 1000);
     /** Migrate SPlatFightcardbfs to Rank */
     for (let i = 0; i < rankRoleBatchCount; ++i) {
@@ -79,7 +84,7 @@ createConnection({
 
         let ranks = rankRoles.map(rank => {
             return new RankModel({
-                userId: rank.userId,
+                userId: +rank.userId,
                 mode: 0,
                 role: rank.cardId,
                 countWin: rank.wins,
@@ -101,6 +106,7 @@ createConnection({
     console.log("Fetch rank mode data from database...");
     const rankModeRepository = await connection.manager.getRepository(SPlatFightnumbfs);
     const rankModeCount = await rankModeRepository.count();
+    console.log("Rank mode count:", rankModeCount);
     const rankModeBatchCount = Math.ceil(rankModeCount / 1000);
     /** Migrate SPlatFightnumbfs to Rank */
     for (let i = 0; i < rankModeBatchCount; ++i) {
@@ -111,7 +117,7 @@ createConnection({
 
         let ranks = rankModes.map(rank => {
             return new RankModel({
-                userId: rank.userId,
+                userId: +rank.userId,
                 mode: rank.roles,  // 6/7/8
                 role: 0,
                 countWin: rank.wins,
@@ -133,6 +139,7 @@ createConnection({
     console.log("Fetch rank whole data from database...");
     const rankRepository = await connection.manager.getRepository(SPlatFightbfs);
     const rankCount = await rankRepository.count();
+    console.log("Rank count:", rankCount);
     const rankBatchCount = Math.ceil(rankCount / 1000);
     /** Migrate SPlatFightnumbfs to Rank */
     for (let i = 0; i < rankBatchCount; ++i) {
@@ -143,7 +150,7 @@ createConnection({
 
         let ranks = rankModels.map(rank => {
             return new RankModel({
-                userId: rank.userId,
+                userId: +rank.userId,
                 mode: 0,  // 0 represents all of modes
                 role: 0,  // 0 represents all of roles
                 countWin: rank.wins,

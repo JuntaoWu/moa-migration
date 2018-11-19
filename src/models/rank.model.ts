@@ -7,7 +7,7 @@ import { required } from 'joi';
  */
 export class Rank extends Typegoose {
     @prop()
-    userId: String;
+    userId: Number;
     @prop()
     mode?: Number;
     @prop()

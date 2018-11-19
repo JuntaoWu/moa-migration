@@ -43,6 +43,16 @@ const envVarsSchema = Joi.object({
     .description('WeChat LoginUri'),
   REDIRECT_URI: Joi.string().required()
     .description('WeChat RedirectUri'),
+  MYSQL_HOST: Joi.string().required()
+    .description('MYSQL_HOST'),
+  MYSQL_PORT: Joi.number().default(3306)
+    .description("Port"),
+  MYSQL_USER: Joi.string().default("root")
+    .description('MYSQL_USER'),
+  MYSQL_PASSWORD: Joi.string().required()
+    .description('MSSQL_PASSWORD'),
+  MYSQL_DATABASE: Joi.string().required()
+    .description('MSSQL_DATABASE'),
   MSSQL_HOST: Joi.string().required()
     .description('MSSQL_HOST'),
   MSSQL_USER: Joi.string().required()
@@ -83,6 +93,7 @@ export const config = {
   },
   mysql: {
     host: envVars.MYSQL_HOST,
+    port: envVars.MYSQL_PORT,
     user: envVars.MYSQL_USER,
     password: envVars.MYSQL_PASSWORD,
     database: envVars.MYSQL_DATABASE,

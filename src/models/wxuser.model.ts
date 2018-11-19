@@ -6,6 +6,8 @@ import { prop, Typegoose, ModelType, InstanceType } from "typegoose";
  */
 export class WxUser extends Typegoose {
     @prop()
+    userId: Number;
+    @prop()
     wxgameOpenId: String;
     @prop()
     nativeOpenId: String;
@@ -28,7 +30,7 @@ export class WxUser extends Typegoose {
     @prop()
     province?: String;
     @prop()
-    score?: Number;
+    registeredAt?: Date;
     @prop()
     migrated?: Boolean;
 }
